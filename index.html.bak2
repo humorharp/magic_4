@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Daily Four · Four is the Magic Number</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg:       #0c1d3a;
+  --surface:  #112247;
+  --border:   #1e3a6e;
+  --text:     #e8f3fd;
+  --muted:    #7ba3cc;
+  --dim:      #3a5f8a;
+  --accent:   #a8d4f5;
+  --green:    #6dd5a8;
+  --yellow:   #f5d76e;
+  --red:      #e07878;
+  --glow:     0 0 18px rgba(168,212,245,0.28), 0 0 50px rgba(168,212,245,0.1);
+}
+
+html { scroll-behavior: smooth; }
+
+html, body {
+  min-height: 100vh;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(rgba(168,212,245,0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168,212,245,0.045) 1px, transparent 1px);
+  background-size: 44px 44px;
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  overflow-x: hidden;
+}
+
+/* ghost 4 */
+.ghost-four {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.ghost-four span {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(60vw, 80vw, 90vh);
+  font-weight: 900;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(168,212,245,0.07);
+  user-select: none;
+  line-height: 1;
+  animation: breathe 8s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.015); }
+}
+
+/* sections */
+.section {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem 3rem;
+}
+.how-section {
+  background: rgba(8, 16, 34, 0.6);
+  border-top: 1px solid var(--border);
+  justify-content: flex-start;
+  padding-top: 4rem;
+}
+
+/* content wrapper */
+.wrap {
+  width: 100%;
+  max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* header */
+header { text-align: center; }
+.eyebrow {
+  font-size: 0.62rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 1rem;
+}
+h1 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text);
+  line-height: 1.15;
+  text-shadow: var(--glow);
+  margin-bottom: 0.6rem;
+}
+h1 em { font-style: normal; color: var(--accent); }
+.date-label {
+  font-size: 0.65rem;
+  color: var(--muted);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.rule { border: none; border-top: 1px solid var(--border); }
+
+/* puzzle */
+#puzzleArea { display: flex; flex-direction: column; gap: 0.75rem; }
+.puzzle-row { display: flex; align-items: center; flex-wrap: nowrap; position: relative; }
+.cells-wrap { display: flex; align-items: center; flex: 1; min-width: 0; }
+.arrow { color: var(--dim); font-size: 0.75rem; padding: 0 0.25rem; flex-shrink: 0; user-select: none; }
+.cell {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  position: relative;
+  transition: border-color 0.2s, background 0.2s;
+}
+.cell.blank { background: rgba(168,212,245,0.05); border-color: var(--dim); }
+.cell.blank:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--dim), inset 0 0 12px rgba(168,212,245,0.07);
+}
+.cell input {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  caret-color: var(--accent);
+  -moz-appearance: textfield;
+  padding: 0;
+}
+.cell input::-webkit-inner-spin-button,
+.cell input::-webkit-outer-spin-button { -webkit-appearance: none; }
+.cell.correct { background: rgba(109,213,168,0.18); border-color: var(--green); color: var(--green); }
+.cell.correct input { color: var(--green); }
+.cell.revealed { background: rgba(224,120,120,0.12); border-color: var(--red); color: var(--muted); font-style: italic; }
+.cell.revealed input { color: var(--muted); font-style: italic; }
+.cell.wrong-flash { animation: cellShake 0.42s ease; }
+.cell.do-flip { animation: cellFlip 0.42s ease forwards; }
+@keyframes cellFlip {
+  0%   { transform: scaleY(1);    background: var(--surface);              border-color: var(--border); }
+  44%  { transform: scaleY(0.04); background: var(--surface);              border-color: var(--border); }
+  56%  { transform: scaleY(0.04); background: rgba(109,213,168,0.18);      border-color: var(--green); }
+  100% { transform: scaleY(1);    background: rgba(109,213,168,0.18);      border-color: var(--green); }
+}
+@keyframes cellShake {
+  0%, 100% { transform: translateX(0); }
+  15%      { transform: translateX(-6px); }
+  35%      { transform: translateX(6px); }
+  55%      { transform: translateX(-4px); }
+  75%      { transform: translateX(4px); }
+  90%      { transform: translateX(-2px); }
+}
+
+/* row buttons */
+.row-actions { display: flex; align-items: center; gap: 0.5rem; margin-left: 0.75rem; flex-shrink: 0; }
+.btn {
+  padding: 0.5rem 0.9rem;
+  background: transparent;
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+.btn-check { border: 1px solid var(--dim); color: var(--accent); }
+.btn-check:hover { background: rgba(168,212,245,0.08); border-color: var(--accent); color: var(--text); }
+.btn-check:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
+.btn-reveal { border: 1px solid var(--border); color: var(--muted); }
+.btn-reveal:hover { background: rgba(224,120,120,0.1); border-color: var(--red); color: var(--red); }
+.btn-reveal:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
+.row-check { color: var(--green); font-size: 1rem; flex-shrink: 0; }
+
+/* end state */
+#endState {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  text-align: center;
+  padding: 1.75rem 1.5rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  position: relative;
+  overflow: hidden;
+}
+#endState::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(168,212,245,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+#endState.show { display: flex; }
+.end-score {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  color: var(--accent);
+  text-shadow: var(--glow);
+  font-weight: 700;
+}
+.end-emojis { font-size: 1.6rem; letter-spacing: 0.12em; line-height: 1.5; }
+.end-buttons { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+.copy-btn {
+  padding: 0.65rem 1.8rem;
+  background: transparent;
+  border: 1px solid var(--dim);
+  color: var(--accent);
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.copy-btn:hover { background: rgba(168,212,245,0.08); border-color: var(--accent); color: var(--text); }
+.copy-btn.copied { border-color: var(--green); color: var(--green); }
+.countdown { font-size: 0.65rem; color: var(--muted); letter-spacing: 0.1em; min-height: 1.2em; }
+
+/* scroll hint */
+.scroll-hint { text-align: center; }
+.scroll-hint a {
+  font-size: 0.6rem;
+  color: var(--dim);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.scroll-hint a:hover { color: var(--muted); }
+
+/* how section */
+.section-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text);
+  text-shadow: var(--glow);
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+.section-sub { font-size: 0.75rem; color: var(--muted); line-height: 1.8; letter-spacing: 0.03em; text-align: center; }
+
+/* explorer */
+.explorer { display: flex; flex-direction: column; gap: 0.75rem; }
+.explorer-label { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--dim); }
+.explorer-row {
+  display: flex;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  transition: border-color 0.25s;
+}
+.explorer-row:focus-within { border-color: var(--dim); }
+.explorer-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0.75rem 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  color: var(--text);
+  caret-color: var(--accent);
+  -moz-appearance: textfield;
+}
+.explorer-input::-webkit-inner-spin-button,
+.explorer-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+.explorer-input::placeholder { color: var(--dim); font-style: italic; }
+.explorer-go {
+  padding: 0.75rem 1.1rem;
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--border);
+  color: var(--accent);
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.explorer-go:hover { background: rgba(168,212,245,0.08); }
+.explorer-result { font-size: 0.78rem; color: var(--muted); min-height: 1.6em; line-height: 2; font-style: italic; }
+.explorer-result .num { color: var(--text); font-style: normal; font-weight: 700; }
+.explorer-result .magic { color: var(--accent); font-style: normal; font-weight: 700; font-size: 1.05em; text-shadow: var(--glow); }
+
+/* explanation */
+.explain-block {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 1.25rem 1.5rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.9;
+  letter-spacing: 0.02em;
+  position: relative;
+  overflow: hidden;
+}
+.explain-block::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(168,212,245,0.03) 0%, transparent 60%);
+  pointer-events: none;
+}
+.explain-block strong { color: var(--text); font-weight: 700; }
+.explain-block em { color: var(--accent); font-style: normal; }
+
+/* footer */
+footer {
+  text-align: center;
+  font-size: 0.6rem;
+  color: var(--dim);
+  letter-spacing: 0.15em;
+  line-height: 2;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+footer a { color: var(--dim); text-decoration: none; transition: color 0.2s; }
+footer a:hover { color: var(--muted); }
+
+/* responsive */
+@media (max-width: 600px) {
+  .cell { width: 48px; height: 48px; font-size: 0.85rem; }
+  .cell input { font-size: 0.85rem; }
+  .arrow { padding: 0 0.15rem; font-size: 0.65rem; }
+  .row-actions { margin-left: 0.4rem; }
+  .btn { padding: 0.4rem 0.6rem; font-size: 0.58rem; }
+}
+@media (max-width: 480px) {
+  .puzzle-row { flex-wrap: wrap; }
+  .cells-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .row-actions { width: 100%; margin-left: 0; justify-content: flex-end; }
+}
+</style>
+</head>
+<body>
+
+<div class="ghost-four" aria-hidden="true"><span>4</span></div>
+
+<!-- ── PUZZLE ── -->
+<section class="section">
+  <div class="wrap">
+    <header>
+      <p class="eyebrow">FOUR &middot; #<span id="dayNum">&mdash;</span></p>
+      <h1>Daily <em>Four</em></h1>
+      <p class="date-label" id="dateLabel">&mdash;</p>
+    </header>
+    <hr class="rule" />
+    <div id="puzzleArea"></div>
+    <div id="endState">
+      <div class="end-score" id="endScore">Score: &mdash;/5</div>
+      <div class="end-emojis" id="endEmojis"></div>
+      <div class="end-buttons">
+        <button class="copy-btn" id="copyBtn" onclick="copyResult()">Copy Result</button>
+      </div>
+      <div class="countdown" id="countdown"></div>
+    </div>
+    <hr class="rule" />
+    <div class="scroll-hint">
+      <a href="#howSection">how does this work? &darr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="section how-section" id="howSection">
+  <div class="wrap">
+    <header>
+      <h2 class="section-title">How does this work?</h2>
+      <p class="section-sub">Every number eventually leads to 4. Try one and see.</p>
+    </header>
+    <hr class="rule" />
+    <div class="explorer">
+      <span class="explorer-label">Enter any number</span>
+      <div class="explorer-row">
+        <input class="explorer-input" type="number" id="explorerInput" placeholder="try 23, 100, 999&hellip;" min="1" inputmode="numeric" pattern="[0-9]*" />
+        <button class="explorer-go" onclick="exploreNumber()">Go &rarr;</button>
+      </div>
+      <div class="explorer-result" id="explorerResult">&mdash;</div>
+    </div>
+    <div class="explain-block">
+      Count the letters in any number&rsquo;s name. <strong>Five</strong> has <em>4</em> letters &mdash; done.
+      <strong>Seven</strong> has <em>5</em> letters &rarr; <strong>five</strong> has <em>4</em>.
+      Keep going and you always land on <em>four</em>, because <strong>four</strong> is the only number
+      whose letter count equals itself. It is the fixed point. The magic number.
+    </div>
+    <hr class="rule" />
+    <footer>
+      <a href="/magic">explore more &rarr;</a><br>
+      christopherjharper.com
+    </footer>
+  </div>
+</section>
+
+<script>
+/* ── chain logic ── */
+const ONEs = ['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const TENs = ['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+
+function toWords(n) {
+  if (n < 0)    return 'negative ' + toWords(-n);
+  if (n < 20)   return ONEs[n];
+  if (n < 100)  { const t = TENs[Math.floor(n/10)], o = n%10; return o ? t+'-'+ONEs[o] : t; }
+  if (n < 1000) { const h = Math.floor(n/100), r = n%100; return ONEs[h]+' hundred'+(r ? ' '+toWords(r) : ''); }
+  if (n < 10000){ const k = Math.floor(n/1000), r = n%1000; return toWords(k)+' thousand'+(r ? ' '+toWords(r) : ''); }
+  return n.toString();
+}
+
+function letterCount(n) {
+  return toWords(Math.abs(n)).replace(/[^a-z]/gi,'').length;
+}
+
+function buildChain(n) {
+  const steps = [], seen = new Set();
+  let cur = n;
+  while (true) {
+    if (seen.has(cur) || steps.length > 30) break;
+    seen.add(cur);
+    const cnt = letterCount(cur);
+    steps.push({ value: cur, count: cnt });
+    if (cnt === 4) break;
+    cur = cnt;
+  }
+  return steps;
+}
+
+/* ── seeded prng ── */
+function mulberry32(seed) {
+  return function() {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+const EPOCH = new Date('2025-01-01T00:00:00Z').getTime();
+function getDayNumber() { return Math.floor((Date.now() - EPOCH) / 86400000); }
+
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+// No position 0 in any blank pattern — guarantees one unique correct answer per row
+// (pos 0 always visible anchors the deterministic left-to-right chain)
+const BLANK_PATTERNS = [[3,4],[2,4],[1,4],[2,3],[1,3]];
+
+function generatePuzzle(dayNumber) {
+  const rng = mulberry32(dayNumber * 1000003 + 7919);
+  // Store each candidate with its chain root so we can prevent
+  // two rows from being windows of the same underlying chain.
+  const candidates = [];
+  for (let n = 10; n <= 9999; n++) {
+    const chain = buildChain(n);
+    if (chain.length < 6) continue;
+    const usable = chain.filter(s => s.value !== 4);
+    for (let start = 0; start <= usable.length - 5; start++) {
+      const segment = usable.slice(start, start + 5).map(s => s.value);
+      if (new Set(segment).size !== 5) continue;
+      if (segment.includes(4)) continue;
+      if (segment.some(v => v <= 0)) continue;
+      if (Math.max(...segment) > 9999) continue;
+      candidates.push({ seg: segment, root: n });
+    }
+  }
+  const rows = [];
+  const usedRoots = new Set();   // no two rows from the same chain
+  const usedValues = new Set();  // no value appears in more than one row (whole segment)
+  let attempts = 0;
+  while (rows.length < 5 && attempts < 100000) {
+    attempts++;
+    const idx = Math.floor(rng() * candidates.length);
+    const { seg, root } = candidates[idx];
+    if (usedRoots.has(root)) continue;
+    // Only block reuse of large values (> 9) — small convergent tail values
+    // (3, 5, 6, 7, 8, 9 etc.) are intrinsic to the math and will overlap;
+    // blocking them makes the candidate pool too thin.
+    if (seg.filter(v => v > 9).some(v => usedValues.has(v))) continue;
+    const blankPattern = BLANK_PATTERNS[rows.length];
+    rows.push({ cells: seg, blanks: blankPattern, difficulty: rows.length + 1 });
+    usedRoots.add(root);
+    seg.filter(v => v > 9).forEach(v => usedValues.add(v));
+  }
+  return rows;
+}
+
+
+/* ── storage ── */
+const STORAGE_KEY = () => 'four-puzzle-' + todayStr();
+function loadState() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY())); } catch(e) { return null; } }
+function saveState(s) { try { localStorage.setItem(STORAGE_KEY(), JSON.stringify(s)); } catch(e) {} }
+
+/* ── game state ── */
+let puzzle = [], rowStates = [], dayNumber = 0;
+
+/* ── render ── */
+function renderPuzzle() {
+  const area = document.getElementById('puzzleArea');
+  area.innerHTML = '';
+  puzzle.forEach((row, ri) => {
+    const rs = rowStates[ri];
+    const rowEl = document.createElement('div');
+    rowEl.className = 'puzzle-row'; rowEl.id = 'row-'+ri;
+    const cellsWrap = document.createElement('div');
+    cellsWrap.className = 'cells-wrap';
+    row.cells.forEach((val, ci) => {
+      if (ci > 0) {
+        const arr = document.createElement('span');
+        arr.className = 'arrow'; arr.textContent = '→';
+        cellsWrap.appendChild(arr);
+      }
+      const cellEl = document.createElement('div');
+      cellEl.className = 'cell'; cellEl.id = 'cell-'+ri+'-'+ci;
+      const isBlank = row.blanks.includes(ci);
+      if (rs.state === 'correct') {
+        cellEl.classList.add('correct');
+        cellEl.textContent = val;
+      } else if (rs.state === 'revealed' && isBlank) {
+        cellEl.classList.add('revealed');
+        cellEl.textContent = val;
+      } else if (!isBlank) {
+        cellEl.textContent = val;
+      } else {
+        cellEl.classList.add('blank');
+        const inp = document.createElement('input');
+        inp.type = 'number'; inp.min = '1'; inp.max = '9999';
+        inp.inputMode = 'numeric'; inp.pattern = '[0-9]*';
+        inp.autocomplete = 'off'; inp.id = 'inp-'+ri+'-'+ci;
+        inp.setAttribute('aria-label', 'Row '+(ri+1)+' blank '+(ci+1));
+        if (rs.inputs && rs.inputs[ci] !== undefined) inp.value = rs.inputs[ci];
+        inp.addEventListener('blur', () => { if (inp.value) inp.value = parseInt(inp.value,10)||''; });
+        inp.addEventListener('keydown', e => {
+          if (e.key === 'Enter') {
+            const bp = row.blanks; const myPos = bp.indexOf(ci);
+            if (myPos === bp.length - 1) checkRow(ri);
+            else { const ni = document.getElementById('inp-'+ri+'-'+bp[myPos+1]); if(ni) ni.focus(); }
+          }
+        });
+        inp.addEventListener('input', () => {
+          if (!rowStates[ri].inputs) rowStates[ri].inputs = {};
+          rowStates[ri].inputs[ci] = inp.value;
+        });
+        cellEl.appendChild(inp);
+      }
+      cellsWrap.appendChild(cellEl);
+    });
+    rowEl.appendChild(cellsWrap);
+    const actions = document.createElement('div');
+    actions.className = 'row-actions';
+    if (rs.state === 'correct') {
+      const ck = document.createElement('span'); ck.className = 'row-check'; ck.textContent = '✓';
+      actions.appendChild(ck);
+    } else if (rs.state === 'revealed') {
+      const lb = document.createElement('span');
+      lb.style.cssText = 'font-size:0.6rem;color:var(--muted);letter-spacing:0.1em';
+      lb.textContent = 'revealed'; actions.appendChild(lb);
+    } else {
+      const cb = document.createElement('button'); cb.className = 'btn btn-check'; cb.textContent = 'Check';
+      cb.onclick = () => checkRow(ri); actions.appendChild(cb);
+      if (rs.attempts > 0) {
+        const rb = document.createElement('button'); rb.className = 'btn btn-reveal'; rb.textContent = 'Reveal';
+        rb.onclick = () => revealRow(ri); actions.appendChild(rb);
+      }
+    }
+    rowEl.appendChild(actions);
+    area.appendChild(rowEl);
+  });
+  for (let ri = 0; ri < puzzle.length; ri++) {
+    const rs = rowStates[ri];
+    if (rs.state === 'pending' || rs.state === 'incorrect') {
+      const fb = puzzle[ri].blanks[0];
+      const inp = document.getElementById('inp-'+ri+'-'+fb);
+      if (inp) setTimeout(() => inp.focus(), 100);
+      break;
+    }
+  }
+}
+
+/* ── check row ── */
+function checkRow(ri) {
+  const row = puzzle[ri]; const rs = rowStates[ri];
+  if (rs.state !== 'pending' && rs.state !== 'incorrect') return;
+  const guesses = {};
+  for (const ci of row.blanks) {
+    const inp = document.getElementById('inp-'+ri+'-'+ci);
+    const v = inp ? parseInt(inp.value, 10) : NaN;
+    if (isNaN(v) || v < 1) { if(inp) inp.focus(); return; }
+    guesses[ci] = v;
+  }
+  // Unique correct answer: compare directly to the actual segment values
+  let allCorrect = true;
+  const wrongIndices = [];
+  for (const ci of row.blanks) {
+    if (guesses[ci] !== row.cells[ci]) { allCorrect = false; wrongIndices.push(ci); }
+  }
+  if (allCorrect) {
+    rs.state = 'correct'; rs.attempts++;
+    const delay = 80;
+    const cellEls = row.cells.map((_,ci) => document.getElementById('cell-'+ri+'-'+ci)).filter(Boolean);
+    cellEls.forEach((el,i) => setTimeout(() => el.classList.add('do-flip'), i*delay));
+    persistState();
+    setTimeout(() => { renderPuzzle(); checkCompletion(); }, cellEls.length*delay + 440);
+  } else {
+    rs.state = 'incorrect'; rs.attempts++;
+    for (const ci of wrongIndices) {
+      const el = document.getElementById('cell-'+ri+'-'+ci);
+      if (!el) continue;
+      el.classList.remove('wrong-flash'); void el.offsetWidth; el.classList.add('wrong-flash');
+      setTimeout(() => el.classList.remove('wrong-flash'), 500);
+    }
+    persistState();
+    setTimeout(() => renderPuzzle(), 0);
+  }
+}
+
+/* ── reveal row ── */
+function revealRow(ri) {
+  rowStates[ri].state = 'revealed';
+  persistState(); renderPuzzle(); checkCompletion();
+}
+
+/* ── completion ── */
+function checkCompletion() {
+  if (!rowStates.every(rs => rs.state === 'correct' || rs.state === 'revealed')) return;
+  const s = buildStorageState(); s.completed = true; saveState(s); showEndState(s);
+}
+
+function buildStorageState() {
+  return {
+    date: todayStr(),
+    rowResults: rowStates.map(rs => {
+      if (rs.state === 'correct' && rs.attempts === 1) return 'solved';
+      if (rs.state === 'correct' && rs.attempts > 1) return 'solved-mistakes';
+      if (rs.state === 'revealed') return 'failed';
+      return 'pending';
+    }),
+    rowStateData: rowStates.map(rs => ({ state: rs.state, attempts: rs.attempts })),
+    completed: false,
+    score: rowStates.filter(rs => rs.state === 'correct').length,
+  };
+}
+
+function persistState() { const s = buildStorageState(); saveState(s); }
+
+/* ── end state ── */
+function showEndState(savedState) {
+  const results = savedState.rowResults || [];
+  const score = results.filter(r => r === 'solved' || r === 'solved-mistakes').length;
+  document.getElementById('endScore').textContent = 'Score: '+score+'/5';
+  const emojis = results.map(r => r==='solved' ? '🟦' : r==='solved-mistakes' ? '🟨' : '⬛');
+  document.getElementById('endEmojis').textContent = emojis.join('');
+  document.getElementById('endState').classList.add('show');
+  startCountdown();
+}
+
+function startCountdown() {
+  function update() {
+    const midnight = new Date(); midnight.setUTCHours(24,0,0,0);
+    const diff = midnight.getTime() - Date.now();
+    if (diff <= 0) { document.getElementById('countdown').textContent = 'New puzzle available now!'; return; }
+    const h = Math.floor(diff/3600000);
+    const m = Math.floor((diff%3600000)/60000);
+    const s = Math.floor((diff%60000)/1000);
+    document.getElementById('countdown').textContent = 'Next puzzle in '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  }
+  update(); setInterval(update, 1000);
+}
+
+function copyResult() {
+  const results = (loadState()||{}).rowResults||[];
+  const score = results.filter(r => r==='solved'||r==='solved-mistakes').length;
+  const emojis = results.map(r => r==='solved' ? '🟦' : r==='solved-mistakes' ? '🟨' : '⬛').join('');
+  const text = 'FOUR #'+dayNumber+'\n'+emojis+'\n'+score+'/5 · fourpuzzle.com';
+  const btn = document.getElementById('copyBtn');
+  const finish = () => {
+    btn.textContent = 'Copied!'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy Result'; btn.classList.remove('copied'); }, 2000);
+  };
+  if (navigator.clipboard) navigator.clipboard.writeText(text).then(finish).catch(() => legacyCopy(text,finish));
+  else legacyCopy(text, finish);
+}
+
+function legacyCopy(text, cb) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta); cb();
+}
+
+/* ── explorer ── */
+function exploreNumber() {
+  const inp = document.getElementById('explorerInput');
+  const n = parseInt(inp.value, 10);
+  if (isNaN(n) || n <= 0) return;
+  const chain = buildChain(n);
+  const parts = chain.map(s => {
+    const isMagic = s.count === 4;
+    const cls = isMagic ? 'magic' : 'num';
+    return '<span class="'+cls+'">'+s.value+'</span> &rarr; <span class="'+cls+'">'+s.count+'</span>';
+  });
+  document.getElementById('explorerResult').innerHTML = parts.join(' &rarr; ');
+}
+document.getElementById('explorerInput').addEventListener('keydown', e => { if (e.key === 'Enter') exploreNumber(); });
+
+/* ── init ── */
+function init() {
+  dayNumber = getDayNumber();
+  document.getElementById('dayNum').textContent = dayNumber;
+  document.getElementById('dateLabel').textContent = todayStr();
+  puzzle = generatePuzzle(dayNumber);
+  const saved = loadState();
+  if (saved && saved.completed) {
+    rowStates = saved.rowStateData
+      ? saved.rowStateData.map(d => ({ state: d.state, attempts: d.attempts, inputs: {} }))
+      : puzzle.map((_,ri) => ({ state: (saved.rowResults[ri]==='failed'||saved.rowResults[ri]==='pending') ? 'revealed' : 'correct', attempts: 1, inputs: {} }));
+    renderPuzzle(); showEndState(saved);
+  } else if (saved && !saved.completed && saved.rowStateData) {
+    rowStates = saved.rowStateData.map(d => ({ state: d.state, attempts: d.attempts, inputs: {} }));
+    renderPuzzle();
+  } else {
+    rowStates = puzzle.map(() => ({ state: 'pending', attempts: 0, inputs: {} }));
+    renderPuzzle();
+  }
+}
+
+init();
+</script>
+</body>
+</html>

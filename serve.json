@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/magic", "destination": "/magic/index.html" },
+    { "source": "/daily", "destination": "/index.html" }
+  ]
+}
