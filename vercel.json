@@ -1,5 +1,9 @@
 {
   "buildCommand": null,
   "outputDirectory": ".",
-  "framework": null
+  "framework": null,
+  "rewrites": [
+    { "source": "/magic", "destination": "/magic/index.html" },
+    { "source": "/daily", "destination": "/index.html" }
+  ]
 }

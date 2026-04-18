@@ -3,15 +3,14 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Four is the Magic Number</title>
+<title>Daily Four · Four is the Magic Number</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&f
+amily=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="styles
+heet" />
 <style>
-  /* ── reset ── */
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-  /* ── tokens ── */
   :root {
     --bg:      #06060e;
     --surface: #0b0b18;
@@ -23,523 +22,766 @@
     --muted:   #6a6250;
     --dim:     #2e2c24;
     --green:   #4ecb8d;
+    --yellow:  #c9a84c;
     --red:     #e06060;
     --glow: 0 0 18px rgba(201,168,76,0.35), 0 0 60px rgba(201,168,76,0.12);
   }
-
-  /* ── base ── */
   html, body {
     min-height: 100vh;
     background: var(--bg);
     color: var(--text);
     font-family: 'JetBrains Mono', monospace;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    display: flex; flex-direction: column; align-items: center;
     padding: 2rem 1.5rem 4rem;
     overflow-x: hidden;
   }
-
-  /* ── ghost 4 ── */
   .ghost-four {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-    z-index: 0;
-    overflow: hidden;
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none; z-index: 0; overflow: hidden;
   }
   .ghost-four span {
     font-family: 'Cinzel', serif;
-    font-size: clamp(60vw, 80vw, 90vh);
-    font-weight: 900;
+    font-size: clamp(60vw, 80vw, 90vh); font-weight: 900;
     color: transparent;
     -webkit-text-stroke: 1px rgba(201,168,76,0.045);
-    user-select: none;
-    line-height: 1;
+    user-select: none; line-height: 1;
     animation: breathe 8s ease-in-out infinite;
   }
   @keyframes breathe {
-    0%, 100% { opacity: 0.6; transform: scale(1); }
-    50%       { opacity: 1;   transform: scale(1.015); }
+    0%,100% { opacity: 0.6; transform: scale(1); }
+    50%     { opacity: 1;   transform: scale(1.015); }
   }
-
-  /* ── scanlines ── */
   body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      to bottom,
-      transparent 0px,
-      transparent 3px,
-      rgba(0,0,0,0.08) 3px,
-      rgba(0,0,0,0.08) 4px
-    );
-    pointer-events: none;
-    z-index: 100;
+    content: ''; position: fixed; inset: 0;
+    background: repeating-linear-gradient(to bottom,
+      transparent 0px, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08)
+ 4px);
+    pointer-events: none; z-index: 100;
   }
-
-  /* ── noise overlay ── */
   body::before {
-    content: '';
-    position: fixed;
-    inset: -50%;
-    width: 200%;
-    height: 200%;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    opacity: 0.4;
-    pointer-events: none;
-    z-index: 0;
+    content: ''; position: fixed; inset: -50%; width: 200%; height: 200%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xml
+ns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fract
+alNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3
+E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C
+/svg%3E");
+    opacity: 0.4; pointer-events: none; z-index: 0;
   }
-
-  /* ── layout ── */
   .wrap {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 640px;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+    position: relative; z-index: 1;
+    width: 100%; max-width: 680px;
+    display: flex; flex-direction: column; gap: 1.5rem;
+    margin-top: auto; margin-bottom: auto;
   }
-
-  /* ── header ── */
-  header {
-    text-align: center;
-  }
+  header { text-align: center; }
   .eyebrow {
-    font-size: 0.62rem;
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    color: var(--gold-lo);
-    margin-bottom: 1rem;
+    font-size: 0.62rem; letter-spacing: 0.4em;
+    text-transform: uppercase; color: var(--gold-lo); margin-bottom: 1rem;
   }
   h1 {
     font-family: 'Cinzel', serif;
-    font-size: clamp(1.8rem, 5vw, 2.8rem);
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    color: var(--text);
-    line-height: 1.15;
-    text-shadow: var(--glow);
-    margin-bottom: 0.6rem;
+    font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 700;
+    letter-spacing: 0.05em; color: var(--text); line-height: 1.15;
+    text-shadow: var(--glow); margin-bottom: 0.6rem;
   }
-  h1 em {
-    font-style: normal;
-    color: var(--gold);
+  h1 em { font-style: normal; color: var(--gold); }
+  .date-label {
+    font-size: 0.65rem; color: var(--muted);
+    letter-spacing: 0.2em; text-transform: uppercase;
   }
-  .tagline {
-    font-size: 0.72rem;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-    line-height: 1.8;
-  }
-
-  /* ── divider ── */
-  .rule {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 0;
-  }
-
-  /* ── input panel ── */
-  .input-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .input-label {
-    font-size: 0.65rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--gold-lo);
-  }
-  .input-row {
-    display: flex;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    transition: border-color 0.25s, box-shadow 0.25s;
-  }
-  .input-row:focus-within {
-    border-color: var(--gold-lo);
-    box-shadow: 0 0 0 1px var(--gold-lo), inset 0 0 20px rgba(201,168,76,0.04);
-  }
-  input {
-    flex: 1;
-    min-width: 0;
-    background: transparent;
-    border: none;
-    outline: none;
-    padding: 0.9rem 1.1rem;
+  .rule { border: none; border-top: 1px solid var(--border); margin: 0; }
+  #puzzleArea { display: flex; flex-direction: column; gap: 0.75rem; }
+  .puzzle-row { display: flex; align-items: center; gap: 0; flex-wrap: nowrap;
+ position: relative; }
+  .cells-wrap { display: flex; align-items: center; gap: 0; flex: 1; min-width
+: 0; }
+  .arrow { color: var(--dim); font-size: 0.75rem; padding: 0 0.25rem; flex-shr
+ink: 0; user-select: none; }
+  .cell {
+    width: 56px; height: 56px; flex-shrink: 0;
+    border: 1px solid var(--border); background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 1.15rem;
-    color: var(--text);
+    font-size: 0.95rem; font-weight: 700; color: var(--text);
+    position: relative; transition: border-color 0.2s, background 0.2s;
+  }
+  .cell.blank { background: rgba(255,255,255,0.04); border-color: var(--gold-l
+o); }
+  .cell.blank:focus-within {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 1px var(--gold-lo), inset 0 0 12px rgba(201,168,76,0.06)
+;
+  }
+  .cell input {
+    width: 100%; height: 100%;
+    background: transparent; border: none; outline: none;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem; font-weight: 700; color: var(--text);
     caret-color: var(--gold);
+    -moz-appearance: textfield; padding: 0;
+    touch-action: manipulation;
   }
-  input::placeholder {
-    color: var(--dim);
-    font-style: italic;
+  .cell input::-webkit-inner-spin-button,
+  .cell input::-webkit-outer-spin-button { -webkit-appearance: none; }
+  .cell.correct { background: rgba(78,203,141,0.22); border-color: var(--green
+); color: var(--green); }
+  .cell.correct input { color: var(--green); }
+  .cell.wrong-flash { animation: cellShake 0.42s ease; }
+  .cell.revealed { background: rgba(224,96,96,0.10); border-color: var(--red);
+ color: var(--muted); font-style: italic; }
+  .cell.revealed input { color: var(--muted); font-style: italic; }
+  .cell.do-flip { animation: cellFlip 0.42s ease forwards; }
+  @keyframes cellFlip {
+    0%   { transform: scaleY(1); background: var(--surface); border-color: var
+(--border); }
+    44%  { transform: scaleY(0.04); background: var(--surface); border-color: 
+var(--border); }
+    56%  { transform: scaleY(0.04); background: rgba(78,203,141,0.22); border-
+color: var(--green); }
+    100% { transform: scaleY(1); background: rgba(78,203,141,0.22); border-col
+or: var(--green); }
   }
-  .go-btn {
-    padding: 0.9rem 1.4rem;
-    background: transparent;
-    border: none;
-    border-left: 1px solid var(--border);
-    color: var(--gold);
-    font-family: 'Cinzel', serif;
-    font-size: 0.72rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s;
-    white-space: nowrap;
-    flex-shrink: 0;
+  @keyframes cellShake {
+    0%,100% { transform: translateX(0); }
+    15%     { transform: translateX(-6px); }
+    35%     { transform: translateX(6px); }
+    55%     { transform: translateX(-4px); }
+    75%     { transform: translateX(4px); }
+    90%     { transform: translateX(-2px); }
   }
-  .go-btn:hover {
-    background: rgba(201,168,76,0.08);
-    color: var(--gold-hi);
+  .row-actions { display: flex; align-items: center; gap: 0.5rem; margin-left:
+ 0.75rem; flex-shrink: 0; }
+  .btn {
+    padding: 0.5rem 0.9rem; background: transparent;
+    font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.2em;
+    text-transform: uppercase; cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s; white-space: n
+owrap;
   }
-  .go-btn:active { background: rgba(201,168,76,0.15); }
-  .input-note {
-    font-size: 0.62rem;
-    color: var(--dim);
-    letter-spacing: 0.05em;
+  .btn-check { border: 1px solid var(--gold-lo); color: var(--gold); }
+  .btn-check:hover { background: rgba(201,168,76,0.08); border-color: var(--go
+ld); color: var(--gold-hi); }
+  .btn-check:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
+  .btn-reveal { border: 1px solid var(--border); color: var(--muted); }
+  .btn-reveal:hover { background: rgba(224,96,96,0.08); border-color: var(--re
+d); color: var(--red); }
+  .btn-reveal:disabled { opacity: 0.3; cursor: default; pointer-events: none; 
+}
+  .row-check { color: var(--green); font-size: 1rem; flex-shrink: 0; }
+  #endState {
+    display: none; flex-direction: column; align-items: center; gap: 1.25rem;
+    text-align: center; padding: 1.75rem 1.5rem;
+    border: 1px solid var(--border); background: var(--surface);
+    position: relative; overflow: hidden;
   }
-
-  /* ── result panel ── */
-  .result-panel {
-    min-height: 80px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    padding: 1.25rem 1.4rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .result-panel::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(201,168,76,0.03) 0%, transparent 60%);
+  #endState::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(201,168,76,0.04) 0%, transparent 
+60%);
     pointer-events: none;
   }
-
-  /* idle state */
-  .idle-text {
-    font-size: 0.72rem;
-    color: var(--dim);
-    letter-spacing: 0.1em;
-    font-style: italic;
+  #endState.show { display: flex; }
+  .end-score {
+    font-family: 'Cinzel', serif; font-size: clamp(1.4rem, 4vw, 2rem);
+    color: var(--gold); text-shadow: var(--glow); font-weight: 700;
   }
-
-  /* narrative */
-  .narrative {
-    font-size: 0.95rem;
-    line-height: 1.9;
-    text-align: center;
-    color: var(--muted);
-    font-style: italic;
-    width: 100%;
+  .end-emojis { font-size: 1.6rem; letter-spacing: 0.12em; line-height: 1.5; }
+  .end-buttons { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content
+: center; }
+  .copy-btn {
+    padding: 0.65rem 1.8rem; background: transparent;
+    border: 1px solid var(--gold-lo); color: var(--gold);
+    font-family: 'Cinzel', serif; font-size: 0.72rem; letter-spacing: 0.25em;
+    text-transform: uppercase; cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
   }
-  .narrative .num {
-    color: var(--text);
-    font-style: normal;
-    font-weight: 700;
-    font-size: 1.05rem;
+  .copy-btn:hover { background: rgba(201,168,76,0.08); border-color: var(--gol
+d); color: var(--gold-hi); }
+  .copy-btn.copied { border-color: var(--green); color: var(--green); }
+  .countdown { font-size: 0.65rem; color: var(--muted); letter-spacing: 0.1em;
+ min-height: 1.2em; }
+  footer { text-align: center; font-size: 0.6rem; color: var(--dim); letter-sp
+acing: 0.15em; line-height: 2; }
+  footer a { color: var(--dim); text-decoration: none; transition: color 0.2s;
+ }
+  footer a:hover { color: var(--muted); }
+  #modal {
+    position: fixed; inset: 0;
+    background: rgba(6,6,14,0.88);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    padding: 1rem; opacity: 0; transition: opacity 0.35s ease;
   }
-  .narrative .magic-num {
-    color: var(--gold);
-    font-style: normal;
-    font-weight: 700;
-    font-size: 1.3rem;
-    text-shadow: var(--glow);
+  #modal.visible { opacity: 1; }
+  .modal-card {
+    background: var(--surface); border: 1px solid var(--border);
+    max-width: 460px; width: 100%; padding: 2rem 2rem 1.75rem;
+    display: flex; flex-direction: column; gap: 1.25rem;
+    position: relative; z-index: 1;
   }
-  .narrative .finale {
-    color: var(--gold);
-    font-style: italic;
+  .modal-step { display: none; flex-direction: column; gap: 1.25rem; }
+  .modal-step.active { display: flex; }
+  .modal-title { font-family: 'Cinzel', serif; font-size: 1.25rem; font-weight
+: 700; color: var(--text); letter-spacing: 0.04em; }
+  .modal-body { font-size: 0.82rem; color: var(--muted); line-height: 1.85; le
+tter-spacing: 0.03em; }
+  .mini-explorer { display: flex; flex-direction: column; gap: 0.75rem; }
+  .mini-input-row {
+    display: flex; border: 1px solid var(--border); background: var(--bg);
+    transition: border-color 0.2s;
   }
-
-  /* typewriter cursor */
-  .cursor {
-    display: inline-block;
-    width: 2px;
-    height: 1em;
-    background: var(--gold);
-    vertical-align: middle;
-    margin-left: 2px;
-    animation: blink 1s step-end infinite;
+  .mini-input-row:focus-within { border-color: var(--gold-lo); }
+  .mini-input {
+    flex: 1; min-width: 0; background: transparent; border: none; outline: non
+e;
+    padding: 0.65rem 0.9rem; font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem; color: var(--text); caret-color: var(--gold);
+    -moz-appearance: textfield;
   }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-
-  /* error */
-  .err-text {
-    font-size: 0.78rem;
-    color: var(--red);
-    letter-spacing: 0.05em;
-    text-align: center;
+  .mini-input::-webkit-inner-spin-button,
+  .mini-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+  .mini-go {
+    padding: 0.65rem 1rem; background: transparent; border: none;
+    border-left: 1px solid var(--border); color: var(--gold);
+    font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.25em;
+    text-transform: uppercase; cursor: pointer; transition: background 0.2s;
   }
-
-  /* ── hint section ── */
-  .hint-section {
-    text-align: center;
-    min-height: 1.5rem;
+  .mini-go:hover { background: rgba(201,168,76,0.08); }
+  .mini-result { font-size: 0.75rem; color: var(--muted); min-height: 1.4em; l
+ine-height: 1.8; font-style: italic; }
+  .mini-result .num { color: var(--text); font-style: normal; font-weight: 700
+; }
+  .mini-result .magic { color: var(--gold); font-style: normal; font-weight: 7
+00; }
+  .answer-btns { display: flex; flex-direction: column; gap: 0.5rem; }
+  .answer-btn {
+    text-align: left; padding: 0.65rem 0.9rem;
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); cursor: pointer;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; letter-spaci
+ng: 0.02em;
+    transition: border-color 0.2s, background 0.2s, color 0.2s;
   }
-  .hint-trigger {
-    background: none;
-    border: none;
-    color: var(--dim);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    cursor: pointer;
-    padding: 0.4rem 0.8rem;
-    border: 1px solid transparent;
-    transition: color 0.2s, border-color 0.2s;
+  .answer-btn:hover { border-color: var(--gold-lo); background: rgba(201,168,7
+6,0.05); }
+  .answer-btn.wrong-flash { animation: btnRedFlash 0.5s ease; }
+  .answer-btn.correct-flash { animation: btnGreenFlash 0.5s ease forwards; }
+  @keyframes btnRedFlash {
+    0%,100% { background: var(--bg); border-color: var(--border); }
+    40%     { background: rgba(224,96,96,0.2); border-color: var(--red); color
+: var(--red); }
   }
-  .hint-trigger:hover {
-    color: var(--muted);
-    border-color: var(--border);
-    background: none;
+  @keyframes btnGreenFlash {
+    0%   { background: var(--bg); border-color: var(--border); }
+    100% { background: rgba(78,203,141,0.18); border-color: var(--green); colo
+r: var(--green); }
   }
-  .hint-text {
-    font-size: 0.78rem;
-    color: var(--muted);
-    font-style: italic;
-    line-height: 1.7;
-    animation: fadeUp 0.4s ease forwards;
-    margin-top: 0.25rem;
+  .modal-continue {
+    padding: 0.7rem 1.6rem; background: transparent;
+    border: 1px solid var(--gold-lo); color: var(--gold);
+    font-family: 'Cinzel', serif; font-size: 0.68rem; letter-spacing: 0.25em;
+    text-transform: uppercase; cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s; align-self: fl
+ex-start;
   }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(6px); }
-    to   { opacity: 1; transform: translateY(0); }
+  .modal-continue:hover { background: rgba(201,168,76,0.08); border-color: var
+(--gold); color: var(--gold-hi); }
+  .modal-continue:disabled { opacity: 0.35; cursor: default; pointer-events: n
+one; }
+  .correct-msg { font-size: 0.72rem; color: var(--green); letter-spacing: 0.05
+em; display: none; }
+  @media (max-width: 600px) {
+    .cell { width: 48px; height: 48px; font-size: 0.85rem; }
+    .cell input { font-size: 0.85rem; }
+    .arrow { padding: 0 0.15rem; font-size: 0.65rem; }
+    .row-actions { margin-left: 0.4rem; }
+    .btn { padding: 0.4rem 0.6rem; font-size: 0.58rem; }
   }
-
-  /* ── footer ── */
-  footer {
-    text-align: center;
-    font-size: 0.6rem;
-    color: var(--dim);
-    letter-spacing: 0.15em;
+  @media (max-width: 480px) {
+    .puzzle-row { flex-wrap: wrap; }
+    .cells-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .row-actions { width: 100%; margin-left: 0; justify-content: flex-end; }
+    .modal-card { padding: 1.5rem 1.25rem; border-radius: 0; margin: 0; max-wi
+dth: 100%; }
+    #modal { padding: 0; align-items: flex-start; }
   }
 </style>
 </head>
 <body>
-
-<!-- ghost 4 -->
 <div class="ghost-four" aria-hidden="true"><span>4</span></div>
 
-<div class="wrap">
-
-  <header>
-    <p class="eyebrow">A Mathematical Curiosity</p>
-    <h1>Four is the <em>Magic</em> Number</h1>
-    <p class="tagline">
-      Enter any number.<br>
-      See what happens.<br>
-      Figure out why.
-    </p>
-  </header>
-
-  <hr class="rule" />
-
-  <div class="input-panel">
-    <span class="input-label">Your Number</span>
-    <div class="input-row">
-      <input
-        type="text"
-        id="numInput"
-        placeholder="23, twenty-three, twenty three..."
-        autocomplete="off"
-        spellcheck="false"
-      />
-      <button class="go-btn" onclick="reveal()">Reveal</button>
+<div id="modal" role="dialog" aria-modal="true" aria-label="How to play">
+  <div class="modal-card">
+    <div class="modal-step active" id="modalStep1">
+      <div class="modal-title">Before you play&hellip;</div>
+      <div class="modal-body">Try entering a number below and pressing Go. Try
+ a few. Notice anything?</div>
+      <div class="mini-explorer">
+        <div class="mini-input-row">
+          <input class="mini-input" type="number" id="miniNumInput" placeholde
+r="Enter any number&hellip;" min="1" max="999999" inputmode="numeric" pattern="[
+0-9]*" />
+          <button class="mini-go" onclick="miniExplore()">Go &rarr;</button>
+        </div>
+        <div class="mini-result" id="miniResult">&mdash;</div>
+      </div>
+      <button class="modal-continue" id="miniContinue" onclick="goModalStep(2)
+" disabled>Continue &rarr;</button>
     </div>
-    <span class="input-note">Accepts digits or written-out words</span>
+    <div class="modal-step" id="modalStep2">
+      <div class="modal-title">One question.</div>
+      <div class="modal-body">Every number eventually leads to 4.<br>What make
+s 4 different from all other numbers?</div>
+      <div class="answer-btns">
+        <button class="answer-btn" onclick="answerQuiz(this,false)">It&rsquo;s
+ even</button>
+        <button class="answer-btn" onclick="answerQuiz(this,false)">It&rsquo;s
+ the smallest number with letters</button>
+        <button class="answer-btn" onclick="answerQuiz(this,true)">It&rsquo;s 
+the only number whose letter count equals itself</button>
+        <button class="answer-btn" onclick="answerQuiz(this,false)">It sounds 
+like &ldquo;for&rdquo;</button>
+      </div>
+      <div class="correct-msg" id="correctMsg">That&rsquo;s it. &check;</div>
+      <button class="modal-continue" id="playBtn" onclick="dismissModal()" dis
+abled>Play &rarr;</button>
+    </div>
   </div>
+</div>
 
-  <div class="result-panel" id="resultPanel">
-    <span class="idle-text">awaiting a number&hellip;</span>
-  </div>
-
-  <div class="hint-section" id="hintSection"></div>
-
+<div class="wrap" id="mainWrap">
+  <header>
+    <p class="eyebrow">FOUR &middot; #<span id="dayNum">&mdash;</span></p>
+    <h1>Daily <em>Four</em></h1>
+    <p class="date-label" id="dateLabel">&mdash;</p>
+  </header>
   <hr class="rule" />
-
-  <footer>christopherjharper.com &mdash; a harmless obsession</footer>
-
+  <div id="puzzleArea"></div>
+  <div id="endState">
+    <div class="end-score" id="endScore">Score: &mdash;/5</div>
+    <div class="end-emojis" id="endEmojis"></div>
+    <div class="end-buttons">
+      <button class="copy-btn" id="copyBtn" onclick="copyResult()">Copy Result
+</button>
+    </div>
+    <div class="countdown" id="countdown"></div>
+  </div>
+  <hr class="rule" />
+  <footer>
+    <a href="/magic">how does this work? &rarr;</a><br>
+    christopherjharper.com
+  </footer>
 </div>
 
 <script>
-/* ── num → words ──────────────────────────────────── */
-const ONEs = ['zero','one','two','three','four','five','six','seven','eight','nine',
-  'ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
-const TENs = ['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+/* ── core chain logic ── */
+const ONEs = ['zero','one','two','three','four','five','six','seven',
+  'eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen',
+  'sixteen','seventeen','nineteen','eighteen','nineteen'];
+const TENs = ['','','twenty','thirty','forty','fifty','sixty','seventy','eight
+y','ninety'];
 
-function numToWords(n) {
-  if (n < 0)          return 'negative ' + numToWords(-n);
-  if (n === 0)        return 'zero';
-  if (n < 20)         return ONEs[n];
-  if (n < 100)        { const t=TENs[Math.floor(n/10)],o=n%10; return o?t+'-'+ONEs[o]:t; }
-  if (n < 1000)       { const h=Math.floor(n/100),r=n%100; return ONEs[h]+' hundred'+(r?' '+numToWords(r):''); }
-  if (n < 1_000_000)  { const k=Math.floor(n/1000),r=n%1000; return numToWords(k)+' thousand'+(r?' '+numToWords(r):''); }
-  if (n < 1_000_000_000) { const m=Math.floor(n/1_000_000),r=n%1_000_000; return numToWords(m)+' million'+(r?' '+numToWords(r):''); }
+function toWords(n) {
+  if (n < 0)    return 'negative ' + toWords(-n);
+  if (n < 20)   return ONEs[n];
+  if (n < 100)  { const t=TENs[Math.floor(n/10)],o=n%10; return o?t+'-'+ONEs[o
+]:t; }
+  if (n < 1000) { const h=Math.floor(n/100),r=n%100; return ONEs[h]+' hundred'
++(r?' '+toWords(r):''); }
+  if (n < 10000){ const k=Math.floor(n/1000),r=n%1000; return toWords(k)+' tho
+usand'+(r?' '+toWords(r):''); }
   return n.toString();
 }
 
-/* ── words → num ──────────────────────────────────── */
-const W2N = {
-  zero:0,one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,
-  ten:10,eleven:11,twelve:12,thirteen:13,fourteen:14,fifteen:15,
-  sixteen:16,seventeen:17,eighteen:18,nineteen:19,
-  twenty:20,thirty:30,forty:40,fifty:50,sixty:60,seventy:70,eighty:80,ninety:90,
-  hundred:100,thousand:1000,million:1_000_000,billion:1_000_000_000,
-};
-
-function wordsToNum(str) {
-  const tokens = str.toLowerCase().replace(/-/g,' ').replace(/[^a-z\s]/g,'').trim().split(/\s+/).filter(Boolean);
-  let negative = false;
-  const filtered = [];
-  for (const t of tokens) {
-    if (t==='negative'||t==='minus') { negative=true; }
-    else if (t==='and') { /* skip */ }
-    else {
-      if (!(t in W2N)) return null;
-      filtered.push(t);
-    }
-  }
-  if (!filtered.length) return null;
-  let total=0, current=0;
-  for (const t of filtered) {
-    const v = W2N[t];
-    if      (v===100)    { current=(current||1)*100; }
-    else if (v>=1000)    { total+=(current||1)*v; current=0; }
-    else                 { current+=v; }
-  }
-  total+=current;
-  return negative ? -total : total;
+function letterCount(n) {
+  return toWords(Math.abs(n)).replace(/[^a-z]/gi,'').length;
 }
 
-/* ── parse input ──────────────────────────────────── */
-function parseInput(raw) {
-  const s = raw.trim();
-  if (!s) return null;
-  if (/^-?\d+$/.test(s)) { const n=parseInt(s,10); return isNaN(n)?null:n; }
-  return wordsToNum(s);
-}
-
-/* ── letter count ──────────────────────────────────── */
-function letterCount(w) { return w.replace(/[^a-z]/gi,'').length; }
-
-/* ── chain ──────────────────────────────────────────── */
 function buildChain(n) {
   const steps=[], seen=new Set();
   let cur=n;
-  while (true) {
-    if (seen.has(cur)||steps.length>25) break;
+  while(true) {
+    if(seen.has(cur)||steps.length>30) break;
     seen.add(cur);
-    const word=numToWords(Math.abs(cur));
-    const cnt=letterCount(word);
-    steps.push({from:cur,to:cnt});
-    if (cnt===4) break;
+    const cnt=letterCount(cur);
+    steps.push({value:cur, count:cnt});
+    if(cnt===4) break;
     cur=cnt;
   }
   return steps;
 }
 
-/* ── typewriter ──────────────────────────────────────── */
-function typewrite(el, html, onDone) {
-  // strip to plain text for typing, then swap to rich html at end
-  const plain = html.replace(/<[^>]+>/g, '');
-  let i = 0;
-  el.innerHTML = '<span class="cursor"></span>';
-  const interval = setInterval(() => {
-    if (i >= plain.length) {
-      clearInterval(interval);
-      el.innerHTML = html;
-      if (onDone) onDone();
-      return;
-    }
-    // show partial plain text + cursor
-    el.innerHTML = plain.slice(0,i+1) + '<span class="cursor"></span>';
-    i++;
-  }, 28);
+/* ── seeded prng ── */
+function mulberry32(seed) {
+  return function() {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
 }
 
-/* ── state ──────────────────────────────────────────── */
-let tries = 0, hintLevel = 0;
-const HINTS = [
-  "Look closely at the chain. What connects one number to the next?",
-  "Try writing the numbers out as words. Notice anything unusual?",
-  "Count something about each word…",
-  "How many letters are in the word <em>four</em>?"
+const EPOCH = new Date('2025-01-01T00:00:00Z').getTime();
+function getDayNumber() { return Math.floor((Date.now() - EPOCH) / 86400000); 
+}
+
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String
+(d.getDate()).padStart(2,'0');
+}
+
+const BLANK_PATTERNS = [[3,4],[1,4],[0,3],[0,2],[0,1]];
+
+function generatePuzzle(dayNumber) {
+  const rng = mulberry32(dayNumber * 1000003 + 7919);
+  const candidates = [];
+  for (let n = 10; n <= 9999; n++) {
+    const chain = buildChain(n);
+    if (chain.length < 6) continue;
+    const usable = chain.filter(s => s.value !== 4);
+    for (let start = 0; start <= usable.length - 5; start++) {
+      const segment = usable.slice(start, start + 5).map(s => s.value);
+      if (new Set(segment).size !== 5) continue;
+      if (segment.includes(4)) continue;
+      if (segment.some(v => v <= 0)) continue;
+      if (Math.max(...segment) > 9999) continue;
+      candidates.push(segment);
+    }
+  }
+  const rows = [];
+  const usedStarts = new Set();
+  let attempts = 0;
+  while (rows.length < 5 && attempts < 10000) {
+    attempts++;
+    const idx = Math.floor(rng() * candidates.length);
+    const seg = candidates[idx];
+    const key = seg[0];
+    if (usedStarts.has(key)) continue;
+    usedStarts.add(key);
+    rows.push({ cells: seg, blanks: BLANK_PATTERNS[rows.length], difficulty: r
+ows.length + 1 });
+  }
+  return rows;
+}
+
+/* ── validation ── */
+function validateGuess(cells, blanks, index, guessedValue) {
+  const left  = index > 0 ? cells[index - 1] : null;
+  const right = index < 4 ? cells[index + 1] : null;
+  let ok = true;
+  if (left  !== null && !blanks.includes(index - 1)) ok = ok && (letterCount(l
+eft) === guessedValue);
+  if (right !== null && !blanks.includes(index + 1)) ok = ok && (letterCount(g
+uessedValue) === right);
+  return ok;
+}
+
+/* ── storage ── */
+const STORAGE_KEY = () => 'four-puzzle-' + todayStr();
+const ONBOARD_KEY = 'four-onboarded';
+function loadState() { try { return JSON.parse(localStorage.getItem(STORAGE_KE
+Y())); } catch(e) { return null; } }
+function saveState(s) { try { localStorage.setItem(STORAGE_KEY(), JSON.stringi
+fy(s)); } catch(e) {} }
+
+/* ── game state ── */
+let puzzle = [], rowStates = [], dayNumber = 0;
+
+/* ── render ── */
+function renderPuzzle() {
+  const area = document.getElementById('puzzleArea');
+  area.innerHTML = '';
+  puzzle.forEach((row, ri) => {
+    const rs = rowStates[ri];
+    const rowEl = document.createElement('div');
+    rowEl.className = 'puzzle-row'; rowEl.id = 'row-'+ri;
+    const cellsWrap = document.createElement('div');
+    cellsWrap.className = 'cells-wrap';
+    row.cells.forEach((val, ci) => {
+      if (ci > 0) {
+        const arr = document.createElement('span');
+        arr.className = 'arrow'; arr.textContent = '→';
+        cellsWrap.appendChild(arr);
+      }
+      const cellEl = document.createElement('div');
+      cellEl.className = 'cell'; cellEl.id = 'cell-'+ri+'-'+ci;
+      const isBlank = row.blanks.includes(ci);
+      if (rs.state === 'correct') {
+        cellEl.classList.add('correct');
+        cellEl.textContent = val;
+      } else if (rs.state === 'revealed' && isBlank) {
+        cellEl.classList.add('revealed');
+        cellEl.textContent = val;
+      } else if (!isBlank) {
+        cellEl.textContent = val;
+      } else {
+        cellEl.classList.add('blank');
+        const inp = document.createElement('input');
+        inp.type = 'number'; inp.min = '1'; inp.max = '9999';
+        inp.inputMode = 'numeric'; inp.pattern = '[0-9]*';
+        inp.autocomplete = 'off'; inp.id = 'inp-'+ri+'-'+ci;
+        inp.setAttribute('aria-label', 'Row '+(ri+1)+' blank '+(ci+1));
+        if (rs.inputs && rs.inputs[ci] !== undefined) inp.value = rs.inputs[ci
 ];
-
-/* ── reveal ──────────────────────────────────────────── */
-function reveal() {
-  const raw = document.getElementById('numInput').value;
-  const panel = document.getElementById('resultPanel');
-  const hintSection = document.getElementById('hintSection');
-
-  const n = parseInput(raw);
-
-  if (n === null) {
-    panel.innerHTML = `<span class="err-text">I don't recognise that &mdash; try "23", "twenty-three", or "twenty three"</span>`;
-    return;
-  }
-  if (Math.abs(n) > 999_999_999) {
-    panel.innerHTML = `<span class="err-text">Something a little smaller, please.</span>`;
-    return;
-  }
-
-  const steps = buildChain(n);
-
-  // build html narrative
-  const parts = steps.map(s => {
-    const last = s.to === 4;
-    return `<span class="num">${s.from}</span> is <span class="${last?'magic-num':'num'}">${s.to}</span>`;
-  });
-  const lastPart = parts.pop();
-  const richHtml = `<span class="narrative">`
-    + (parts.length ? parts.join(', ') + ', ' : '')
-    + lastPart
-    + `, <span class="finale">and 4 is the magic number.</span></span>`;
-
-  panel.innerHTML = `<span class="narrative"><span class="cursor"></span></span>`;
-  const narEl = panel.querySelector('.narrative');
-
-  typewrite(narEl, richHtml.replace(/^<span class="narrative">|<\/span>$/g,''), () => {
-    tries++;
-    hintSection.innerHTML = '';
-    if (tries >= 4 && hintLevel < HINTS.length) {
-      hintSection.innerHTML = `<button class="hint-trigger" onclick="showHint()">i need a hint</button>`;
+        inp.addEventListener('blur', () => { if (inp.value) inp.value = parseI
+nt(inp.value,10)||''; });
+        inp.addEventListener('keydown', e => {
+          if (e.key === 'Enter') {
+            const bp = row.blanks; const myPos = bp.indexOf(ci);
+            if (myPos === bp.length - 1) checkRow(ri);
+            else { const ni = document.getElementById('inp-'+ri+'-'+bp[myPos+1
+]); if(ni) ni.focus(); }
+          }
+        });
+        inp.addEventListener('input', () => {
+          if (!rowStates[ri].inputs) rowStates[ri].inputs = {};
+          rowStates[ri].inputs[ci] = inp.value;
+        });
+        cellEl.appendChild(inp);
+      }
+      cellsWrap.appendChild(cellEl);
+    });
+    rowEl.appendChild(cellsWrap);
+    const actions = document.createElement('div');
+    actions.className = 'row-actions';
+    if (rs.state === 'correct') {
+      const ck = document.createElement('span'); ck.className = 'row-check'; c
+k.textContent = '✓';
+      actions.appendChild(ck);
+    } else if (rs.state === 'revealed') {
+      const lb = document.createElement('span');
+      lb.style.cssText = 'font-size:0.6rem;color:var(--muted);letter-spacing:0
+.1em';
+      lb.textContent = 'revealed'; actions.appendChild(lb);
+    } else {
+      const cb = document.createElement('button'); cb.className = 'btn btn-che
+ck'; cb.textContent = 'Check';
+      cb.onclick = () => checkRow(ri); actions.appendChild(cb);
+      if (rs.attempts > 0) {
+        const rb = document.createElement('button'); rb.className = 'btn btn-r
+eveal'; rb.textContent = 'Reveal';
+        rb.onclick = () => revealRow(ri); actions.appendChild(rb);
+      }
     }
+    rowEl.appendChild(actions);
+    area.appendChild(rowEl);
   });
+  for (let ri = 0; ri < puzzle.length; ri++) {
+    const rs = rowStates[ri];
+    if (rs.state === 'pending' || rs.state === 'incorrect') {
+      const fb = puzzle[ri].blanks[0];
+      const inp = document.getElementById('inp-'+ri+'-'+fb);
+      if (inp) setTimeout(() => inp.focus(), 100);
+      break;
+    }
+  }
 }
 
-/* ── hints ──────────────────────────────────────────── */
-function showHint() {
-  if (hintLevel >= HINTS.length) return;
-  const hs = document.getElementById('hintSection');
-  hs.innerHTML = `<div class="hint-text">${HINTS[hintLevel]}</div>`;
-  hintLevel++;
-  setTimeout(() => {
-    if (hintLevel < HINTS.length) {
-      hs.innerHTML += `<button class="hint-trigger" onclick="showHint()" style="margin-top:0.5rem">another hint</button>`;
+/* ── check row ── */
+function checkRow(ri) {
+  const row = puzzle[ri]; const rs = rowStates[ri];
+  if (rs.state !== 'pending' && rs.state !== 'incorrect') return;
+  const guesses = {};
+  for (const ci of row.blanks) {
+    const inp = document.getElementById('inp-'+ri+'-'+ci);
+    const v = inp ? parseInt(inp.value, 10) : NaN;
+    if (isNaN(v) || v < 1) { if(inp) inp.focus(); return; }
+    guesses[ci] = v;
+  }
+  const cells = row.cells.slice();
+  for (const ci of row.blanks) cells[ci] = guesses[ci];
+  let allCorrect = true;
+  const wrongIndices = [];
+  for (const ci of row.blanks) {
+    if (!validateGuess(cells, row.blanks, ci, guesses[ci])) { allCorrect = fal
+se; wrongIndices.push(ci); }
+  }
+  if (allCorrect) {
+    rs.state = 'correct'; rs.attempts++;
+    const delay = 80;
+    const cellEls = row.cells.map((_,ci) => document.getElementById('cell-'+ri
++'-'+ci)).filter(Boolean);
+    cellEls.forEach((el,i) => setTimeout(() => el.classList.add('do-flip'), i*
+delay));
+    persistState();
+    setTimeout(() => { renderPuzzle(); checkCompletion(); }, cellEls.length*de
+lay + 440);
+  } else {
+    rs.state = 'incorrect'; rs.attempts++;
+    for (const ci of wrongIndices) {
+      const el = document.getElementById('cell-'+ri+'-'+ci);
+      if (!el) continue;
+      el.classList.remove('wrong-flash'); void el.offsetWidth; el.classList.ad
+d('wrong-flash');
+      setTimeout(() => el.classList.remove('wrong-flash'), 500);
     }
-  }, 600);
+    persistState();
+    setTimeout(() => renderPuzzle(), 0);
+  }
 }
 
-/* ── enter key ──────────────────────────────────────── */
-document.getElementById('numInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') reveal();
-});
+/* ── reveal row ── */
+function revealRow(ri) {
+  rowStates[ri].state = 'revealed';
+  persistState(); renderPuzzle(); checkCompletion();
+}
+
+/* ── completion ── */
+function checkCompletion() {
+  if (!rowStates.every(rs => rs.state === 'correct' || rs.state === 'revealed'
+)) return;
+  const s = buildStorageState(); s.completed = true; saveState(s); showEndStat
+e(s);
+}
+
+function buildStorageState() {
+  return {
+    date: todayStr(),
+    rowResults: rowStates.map(rs => {
+      if (rs.state === 'correct' && rs.attempts === 1) return 'solved';
+      if (rs.state === 'correct' && rs.attempts > 1) return 'solved-mistakes';
+      if (rs.state === 'revealed') return 'failed';
+      return 'pending';
+    }),
+    rowStateData: rowStates.map(rs => ({ state: rs.state, attempts: rs.attempt
+s })),
+    completed: false,
+    score: rowStates.filter(rs => rs.state === 'correct').length,
+  };
+}
+
+function persistState() { const s = buildStorageState(); saveState(s); }
+
+/* ── end state ── */
+function showEndState(savedState) {
+  const results = savedState.rowResults || [];
+  const score = results.filter(r => r === 'solved' || r === 'solved-mistakes')
+.length;
+  document.getElementById('endScore').textContent = 'Score: '+score+'/5';
+  const emojis = results.map(r => r==='solved'?'�':r==='solved-mistakes'?'�':'
+�');
+  document.getElementById('endEmojis').textContent = emojis.join('');
+  document.getElementById('endState').classList.add('show');
+  startCountdown();
+}
+
+function startCountdown() {
+  function update() {
+    const midnight = new Date(); midnight.setUTCHours(24,0,0,0);
+    const diff = midnight.getTime() - Date.now();
+    if (diff <= 0) { document.getElementById('countdown').textContent = 'New p
+uzzle available now!'; return; }
+    const h = Math.floor(diff/3600000);
+    const m = Math.floor((diff%3600000)/60000);
+    const s = Math.floor((diff%60000)/1000);
+    document.getElementById('countdown').textContent =
+      'Next puzzle in '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'
+)+':'+String(s).padStart(2,'0');
+  }
+  update(); setInterval(update, 1000);
+}
+
+function copyResult() {
+  const results = (loadState()||{}).rowResults||[];
+  const score = results.filter(r => r==='solved'||r==='solved-mistakes').lengt
+h;
+  const emojis = results.map(r => r==='solved'?'�':r==='solved-mistakes'?'�':'
+�').join('');
+  const text = 'FOUR #'+dayNumber+'\n'+emojis+'\n'+score+'/5 · fourpuzzle.com'
+;
+  const btn = document.getElementById('copyBtn');
+  const finish = () => {
+    btn.textContent = 'Copied!'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy Result'; btn.classList.remove('
+copied'); }, 2000);
+  };
+  if (navigator.clipboard) navigator.clipboard.writeText(text).then(finish).ca
+tch(() => legacyCopy(text,finish));
+  else legacyCopy(text, finish);
+}
+
+function legacyCopy(text, cb) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta); cb();
+}
+
+/* ── onboarding ── */
+let miniExplored = false;
+function miniExplore() {
+  const inp = document.getElementById('miniNumInput');
+  const n = parseInt(inp.value, 10);
+  if (isNaN(n) || n <= 0) return;
+  const chain = buildChain(n);
+  const parts = chain.map(s => {
+    const last = s.count === 4;
+    return '<span class="'+(last?'magic':'num')+'">'+s.value+'</span> → <span 
+class="'+(last?'magic':'num')+'">'+s.count+'</span>';
+  });
+  document.getElementById('miniResult').innerHTML = parts.join(' → ');
+  if (!miniExplored) { miniExplored = true; document.getElementById('miniConti
+nue').disabled = false; }
+}
+function goModalStep(step) {
+  document.querySelectorAll('.modal-step').forEach(el => el.classList.remove('
+active'));
+  document.getElementById('modalStep'+step).classList.add('active');
+}
+function answerQuiz(btn, correct) {
+  btn.classList.remove('wrong-flash','correct-flash'); void btn.offsetWidth;
+  if (correct) {
+    btn.classList.add('correct-flash');
+    document.getElementById('correctMsg').style.display = 'block';
+    document.getElementById('playBtn').disabled = false;
+  } else {
+    btn.classList.add('wrong-flash');
+  }
+}
+function dismissModal() {
+  localStorage.setItem(ONBOARD_KEY, '1');
+  const modal = document.getElementById('modal');
+  modal.style.opacity = '0';
+  setTimeout(() => { modal.style.display = 'none'; }, 350);
+}
+document.getElementById('miniNumInput').addEventListener('keydown', e => { if(
+e.key==='Enter') miniExplore(); });
+
+/* ── init ── */
+function init() {
+  dayNumber = getDayNumber();
+  document.getElementById('dayNum').textContent = dayNumber;
+  document.getElementById('dateLabel').textContent = todayStr();
+  puzzle = generatePuzzle(dayNumber);
+  const saved = loadState();
+  if (saved && saved.completed) {
+    rowStates = saved.rowStateData
+      ? saved.rowStateData.map(d => ({ state: d.state, attempts: d.attempts, i
+nputs: {} }))
+      : puzzle.map((_,ri) => ({ state: (saved.rowResults[ri]==='failed'||saved
+.rowResults[ri]==='pending')?'revealed':'correct', attempts: 1, inputs: {} })); 
+    renderPuzzle(); showEndState(saved);
+  } else if (saved && !saved.completed && saved.rowStateData) {
+    rowStates = saved.rowStateData.map(d => ({ state: d.state, attempts: d.att
+empts, inputs: {} }));
+    renderPuzzle();
+  } else {
+    rowStates = puzzle.map(() => ({ state: 'pending', attempts: 0, inputs: {} 
+}));
+    renderPuzzle();
+  }
+  const onboarded = localStorage.getItem(ONBOARD_KEY);
+  const modal = document.getElementById('modal');
+  if (onboarded) { modal.style.display = 'none'; }
+  else { requestAnimationFrame(() => modal.classList.add('visible')); }
+}
+
+init();
 </script>
 </body>
 </html>

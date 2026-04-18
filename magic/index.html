@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Four is the Magic Number</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet" />
+<style>
+  /* ── reset ── */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* ── tokens ── */
+  :root {
+    --bg:      #06060e;
+    --surface: #0b0b18;
+    --border:  #1c1c30;
+    --gold:    #c9a84c;
+    --gold-hi: #f0cc70;
+    --gold-lo: #7a6030;
+    --text:    #ddd4bc;
+    --muted:   #6a6250;
+    --dim:     #2e2c24;
+    --green:   #4ecb8d;
+    --red:     #e06060;
+    --glow: 0 0 18px rgba(201,168,76,0.35), 0 0 60px rgba(201,168,76,0.12);
+  }
+
+  /* ── base ── */
+  html, body {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem 4rem;
+    overflow-x: hidden;
+  }
+
+  /* ── ghost 4 ── */
+  .ghost-four {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .ghost-four span {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(60vw, 80vw, 90vh);
+    font-weight: 900;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(201,168,76,0.045);
+    user-select: none;
+    line-height: 1;
+    animation: breathe 8s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50%       { opacity: 1;   transform: scale(1.015); }
+  }
+
+  /* ── scanlines ── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 3px,
+      rgba(0,0,0,0.08) 3px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* ── noise overlay ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: -50%;
+    width: 200%;
+    height: 200%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── layout ── */
+  .wrap {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 640px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* ── header ── */
+  header {
+    text-align: center;
+  }
+  .eyebrow {
+    font-size: 0.62rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold-lo);
+    margin-bottom: 1rem;
+  }
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    line-height: 1.15;
+    text-shadow: var(--glow);
+    margin-bottom: 0.6rem;
+  }
+  h1 em {
+    font-style: normal;
+    color: var(--gold);
+  }
+  .tagline {
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    line-height: 1.8;
+  }
+
+  /* ── divider ── */
+  .rule {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+  }
+
+  /* ── input panel ── */
+  .input-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .input-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold-lo);
+  }
+  .input-row {
+    display: flex;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+  .input-row:focus-within {
+    border-color: var(--gold-lo);
+    box-shadow: 0 0 0 1px var(--gold-lo), inset 0 0 20px rgba(201,168,76,0.04);
+  }
+  input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0.9rem 1.1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.15rem;
+    color: var(--text);
+    caret-color: var(--gold);
+  }
+  input::placeholder {
+    color: var(--dim);
+    font-style: italic;
+  }
+  .go-btn {
+    padding: 0.9rem 1.4rem;
+    background: transparent;
+    border: none;
+    border-left: 1px solid var(--border);
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .go-btn:hover {
+    background: rgba(201,168,76,0.08);
+    color: var(--gold-hi);
+  }
+  .go-btn:active { background: rgba(201,168,76,0.15); }
+  .input-note {
+    font-size: 0.62rem;
+    color: var(--dim);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── result panel ── */
+  .result-panel {
+    min-height: 80px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 1.25rem 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .result-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(201,168,76,0.03) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* idle state */
+  .idle-text {
+    font-size: 0.72rem;
+    color: var(--dim);
+    letter-spacing: 0.1em;
+    font-style: italic;
+  }
+
+  /* narrative */
+  .narrative {
+    font-size: 0.95rem;
+    line-height: 1.9;
+    text-align: center;
+    color: var(--muted);
+    font-style: italic;
+    width: 100%;
+  }
+  .narrative .num {
+    color: var(--text);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 1.05rem;
+  }
+  .narrative .magic-num {
+    color: var(--gold);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 1.3rem;
+    text-shadow: var(--glow);
+  }
+  .narrative .finale {
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  /* typewriter cursor */
+  .cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: var(--gold);
+    vertical-align: middle;
+    margin-left: 2px;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  /* error */
+  .err-text {
+    font-size: 0.78rem;
+    color: var(--red);
+    letter-spacing: 0.05em;
+    text-align: center;
+  }
+
+  /* ── hint section ── */
+  .hint-section {
+    text-align: center;
+    min-height: 1.5rem;
+  }
+  .hint-trigger {
+    background: none;
+    border: none;
+    color: var(--dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 0.4rem 0.8rem;
+    border: 1px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .hint-trigger:hover {
+    color: var(--muted);
+    border-color: var(--border);
+    background: none;
+  }
+  .hint-text {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.7;
+    animation: fadeUp 0.4s ease forwards;
+    margin-top: 0.25rem;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── footer ── */
+  footer {
+    text-align: center;
+    font-size: 0.6rem;
+    color: var(--dim);
+    letter-spacing: 0.15em;
+  }
+</style>
+</head>
+<body>
+
+<!-- ghost 4 -->
+<div class="ghost-four" aria-hidden="true"><span>4</span></div>
+
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow"><a href="/">← daily puzzle</a></p>
+    <h1>Four is the <em>Magic</em> Number</h1>
+    <p class="tagline">
+      Enter any number.<br>
+      See what happens.<br>
+      Figure out why.
+    </p>
+  </header>
+
+  <hr class="rule" />
+
+  <div class="input-panel">
+    <span class="input-label">Your Number</span>
+    <div class="input-row">
+      <input
+        type="text"
+        id="numInput"
+        placeholder="23, twenty-three, twenty three..."
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <button class="go-btn" onclick="reveal()">Reveal</button>
+    </div>
+    <span class="input-note">Accepts digits or written-out words</span>
+  </div>
+
+  <div class="result-panel" id="resultPanel">
+    <span class="idle-text">awaiting a number&hellip;</span>
+  </div>
+
+  <div class="hint-section" id="hintSection"></div>
+
+  <hr class="rule" />
+
+  <footer>christopherjharper.com &mdash; a harmless obsession</footer>
+
+</div>
+
+<script>
+/* ── num → words ──────────────────────────────────── */
+const ONEs = ['zero','one','two','three','four','five','six','seven','eight','nine',
+  'ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const TENs = ['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+
+function numToWords(n) {
+  if (n < 0)          return 'negative ' + numToWords(-n);
+  if (n === 0)        return 'zero';
+  if (n < 20)         return ONEs[n];
+  if (n < 100)        { const t=TENs[Math.floor(n/10)],o=n%10; return o?t+'-'+ONEs[o]:t; }
+  if (n < 1000)       { const h=Math.floor(n/100),r=n%100; return ONEs[h]+' hundred'+(r?' '+numToWords(r):''); }
+  if (n < 1_000_000)  { const k=Math.floor(n/1000),r=n%1000; return numToWords(k)+' thousand'+(r?' '+numToWords(r):''); }
+  if (n < 1_000_000_000) { const m=Math.floor(n/1_000_000),r=n%1_000_000; return numToWords(m)+' million'+(r?' '+numToWords(r):''); }
+  return n.toString();
+}
+
+/* ── words → num ──────────────────────────────────── */
+const W2N = {
+  zero:0,one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,
+  ten:10,eleven:11,twelve:12,thirteen:13,fourteen:14,fifteen:15,
+  sixteen:16,seventeen:17,eighteen:18,nineteen:19,
+  twenty:20,thirty:30,forty:40,fifty:50,sixty:60,seventy:70,eighty:80,ninety:90,
+  hundred:100,thousand:1000,million:1_000_000,billion:1_000_000_000,
+};
+
+function wordsToNum(str) {
+  const tokens = str.toLowerCase().replace(/-/g,' ').replace(/[^a-z\s]/g,'').trim().split(/\s+/).filter(Boolean);
+  let negative = false;
+  const filtered = [];
+  for (const t of tokens) {
+    if (t==='negative'||t==='minus') { negative=true; }
+    else if (t==='and') { /* skip */ }
+    else {
+      if (!(t in W2N)) return null;
+      filtered.push(t);
+    }
+  }
+  if (!filtered.length) return null;
+  let total=0, current=0;
+  for (const t of filtered) {
+    const v = W2N[t];
+    if      (v===100)    { current=(current||1)*100; }
+    else if (v>=1000)    { total+=(current||1)*v; current=0; }
+    else                 { current+=v; }
+  }
+  total+=current;
+  return negative ? -total : total;
+}
+
+/* ── parse input ──────────────────────────────────── */
+function parseInput(raw) {
+  const s = raw.trim();
+  if (!s) return null;
+  if (/^-?\d+$/.test(s)) { const n=parseInt(s,10); return isNaN(n)?null:n; }
+  return wordsToNum(s);
+}
+
+/* ── letter count ──────────────────────────────────── */
+function letterCount(w) { return w.replace(/[^a-z]/gi,'').length; }
+
+/* ── chain ──────────────────────────────────────────── */
+function buildChain(n) {
+  const steps=[], seen=new Set();
+  let cur=n;
+  while (true) {
+    if (seen.has(cur)||steps.length>25) break;
+    seen.add(cur);
+    const word=numToWords(Math.abs(cur));
+    const cnt=letterCount(word);
+    steps.push({from:cur,to:cnt});
+    if (cnt===4) break;
+    cur=cnt;
+  }
+  return steps;
+}
+
+/* ── typewriter ──────────────────────────────────────── */
+function typewrite(el, html, onDone) {
+  // strip to plain text for typing, then swap to rich html at end
+  const plain = html.replace(/<[^>]+>/g, '');
+  let i = 0;
+  el.innerHTML = '<span class="cursor"></span>';
+  const interval = setInterval(() => {
+    if (i >= plain.length) {
+      clearInterval(interval);
+      el.innerHTML = html;
+      if (onDone) onDone();
+      return;
+    }
+    // show partial plain text + cursor
+    el.innerHTML = plain.slice(0,i+1) + '<span class="cursor"></span>';
+    i++;
+  }, 28);
+}
+
+/* ── state ──────────────────────────────────────────── */
+let tries = 0, hintLevel = 0;
+const HINTS = [
+  "Look closely at the chain. What connects one number to the next?",
+  "Try writing the numbers out as words. Notice anything unusual?",
+  "Count something about each word…",
+  "How many letters are in the word <em>four</em>?"
+];
+
+/* ── reveal ──────────────────────────────────────────── */
+function reveal() {
+  const raw = document.getElementById('numInput').value;
+  const panel = document.getElementById('resultPanel');
+  const hintSection = document.getElementById('hintSection');
+
+  const n = parseInput(raw);
+
+  if (n === null) {
+    panel.innerHTML = `<span class="err-text">I don't recognise that &mdash; try "23", "twenty-three", or "twenty three"</span>`;
+    return;
+  }
+  if (Math.abs(n) > 999_999_999) {
+    panel.innerHTML = `<span class="err-text">Something a little smaller, please.</span>`;
+    return;
+  }
+
+  const steps = buildChain(n);
+
+  // build html narrative
+  const parts = steps.map(s => {
+    const last = s.to === 4;
+    return `<span class="num">${s.from}</span> is <span class="${last?'magic-num':'num'}">${s.to}</span>`;
+  });
+  const lastPart = parts.pop();
+  const richHtml = `<span class="narrative">`
+    + (parts.length ? parts.join(', ') + ', ' : '')
+    + lastPart
+    + `, <span class="finale">and 4 is the magic number.</span></span>`;
+
+  panel.innerHTML = `<span class="narrative"><span class="cursor"></span></span>`;
+  const narEl = panel.querySelector('.narrative');
+
+  typewrite(narEl, richHtml.replace(/^<span class="narrative">|<\/span>$/g,''), () => {
+    tries++;
+    hintSection.innerHTML = '';
+    if (tries >= 4 && hintLevel < HINTS.length) {
+      hintSection.innerHTML = `<button class="hint-trigger" onclick="showHint()">i need a hint</button>`;
+    }
+  });
+}
+
+/* ── hints ──────────────────────────────────────────── */
+function showHint() {
+  if (hintLevel >= HINTS.length) return;
+  const hs = document.getElementById('hintSection');
+  hs.innerHTML = `<div class="hint-text">${HINTS[hintLevel]}</div>`;
+  hintLevel++;
+  setTimeout(() => {
+    if (hintLevel < HINTS.length) {
+      hs.innerHTML += `<button class="hint-trigger" onclick="showHint()" style="margin-top:0.5rem">another hint</button>`;
+    }
+  }, 600);
+}
+
+/* ── enter key ──────────────────────────────────────── */
+document.getElementById('numInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') reveal();
+});
+</script>
+</body>
+</html>
